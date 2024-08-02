@@ -9,6 +9,7 @@ class Tienda(db.Model):
     usuarios = db.relationship('Usuarios', backref='tienda')
     inventario = db.relationship('Inventario', backref='tienda')
     finanzas = db.relationship('Ticket', backref='tienda')
+    AdminTiendas = db.relationship('AdminTiendas', backref='tienda', lazy=True)
     
     def __repr__(self):
         return f'<Tienda {self.nombre}>'
@@ -23,13 +24,8 @@ class Tienda(db.Model):
             "inventario": [producto.serialize() for producto in self.inventario]
         }
 
-class AdminTiendas(db.Model):
-    id = db.Column(db.Integer, unique = True, nullable = True)
-    admin_id = db.Column(db.Numeric, db.ForeignKey('usuarios.id'))
-    tienda_id = db.Column(db.Integer, db.ForeignKey('tienda.id'))
-
 class Usuarios(db.Model):
-    id = db.Column(db.Numeric(5, 2), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(120), nullable=False)
     apellido = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -37,6 +33,9 @@ class Usuarios(db.Model):
     rol = db.Column(db.String(80), nullable=False)
     tienda_id = db.Column(db.Integer, db.ForeignKey('tienda.id'))
     is_active = db.Column(db.Boolean(), nullable=False)
+    fecha_contratacion = db.Column(db.Date, nullable=False)
+    horarios = db.relationship('Horario', backref='usuario', lazy=True)
+    AdminTiendas = db.relationship('AdminTiendas', backref='usuario', lazy=True)
     
     def __repr__(self):
         return f'<Usuarios {self.email}>'
@@ -49,7 +48,39 @@ class Usuarios(db.Model):
             "email": self.email,
             "rol": self.rol,  
             "tienda": self.tienda.nombre if self.tienda else None,  
+            "fecha_contratacion": self.fecha_contratacion,
+            "horarios": [{"dia_semana": horario.dia_semana, "hora_inicio": horario.hora_inicio, "hora_fin": horario.hora_fin} for horario in self.horarios] if self.horarios else [],
         }
+        
+class Horario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    dia_semana = db.Column(db.Integer, nullable=False)  # 0-6 para lunes-domingo
+    hora_inicio = db.Column(db.Time, nullable=False)
+    hora_fin = db.Column(db.Time, nullable=False)
+    
+    def __repr__(self):
+        return f'<Horario {self.dia_semana} {self.hora_inicio}-{self.hora_fin}>'
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "dia_semana": self.dia_semana,
+            "hora_inicio": self.hora_inicio,
+            "hora_fin": self.hora_fin
+        }
+class AdminTiendas(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    admin_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+    tienda_id = db.Column(db.Integer, db.ForeignKey('tienda.id'))
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "admin_id": self.admin_id,
+            "tienda_id": self.tienda_id
+        }
+    
 class Producto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(120), nullable=False)
@@ -58,6 +89,17 @@ class Producto(db.Model):
     marca = db.Column(db.String(120), nullable=False)
     precio = db.Column(db.Numeric(10, 2), nullable=False)
     codigoBarras = db.Column(db.String(120), nullable=False)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "descripcion": self.descripcion,
+            "categoria": self.categoria.nombre,
+            "marca": self.marca,
+            "precio": self.precio,
+            "codigoBarras": self.codigoBarras
+        }
     
 class Categoria(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,12 +119,33 @@ class Inventario(db.Model):
     producto_id = db.Column(db.Integer, db.ForeignKey('producto.id'), nullable=False)
     producto = db.relationship('Producto', backref=db.backref('inventario', lazy='dynamic'))
     
+    def serialize(self):
+        return {
+            "inventario_id": self.inventario_id,
+            "tienda_id": self.tienda_id,
+            "nombre": self.producto.nombre,
+            "descripcion": self.producto.descripcion,
+            "marca": self.producto.marca,
+            "precio": self.producto.precio,
+            "codigoBarras": self.producto.codigoBarras,
+            "cantidad": self.cantidad,
+        }
+    
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fecha = db.Column(db.DateTime, nullable=False)
     total = db.Column(db.Float, nullable=False)
     tienda_id = db.Column(db.Integer, db.ForeignKey('tienda.id'))
     vendedor_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "fecha": self.fecha,
+            "total": self.total,
+            "tienda_id": self.tienda_id,
+            "vendedor_id": self.vendedor_id
+        }
 
 class DetalleTicket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -92,6 +155,22 @@ class DetalleTicket(db.Model):
     precio = db.Column(db.Float, nullable=False)
     ticket = db.relationship('Ticket', backref=db.backref('detalles', lazy=True))
     producto = db.relationship('Producto', backref=db.backref('detalles_ticket', lazy=True))
+    compra_Venta = db.Column(db.Boolean, nullable=False)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "ticket_id": self.ticket_id,
+            "nombre_producto": self.producto.nombre,
+            "descripcion": self.producto.descripcion,
+            "cantidad": self.cantidad,
+            "precio": self.precio,
+            "usuario_id": self.ticket.vendedor.id,
+            "usuario": self.ticket.vendedor.nombre,
+            "fecha": self.ticket.fecha,
+            "compra_Venta": self.compra_Venta,
+            "total": self.ticket.total            
+        }
 
 def ventas_por_dia(fecha):
     ventas = db.session.query(db.func.sum(Ticket.total)).filter(db.func.date(Ticket.fecha) == fecha).scalar()

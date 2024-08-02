@@ -4,7 +4,7 @@ import os
 import openfoodfacts
 from flask import Flask, request, jsonify, Blueprint
 from dotenv import load_dotenv
-from api.models import db, Usuarios, Tienda, Producto, Categoria, Inventario, Ticket, DetalleTicket, AdminTiendas
+from api.models import db, Usuarios, Tienda, Producto, Categoria, Inventario, Ticket, DetalleTicket, AdminTiendas, Horario
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
@@ -43,20 +43,22 @@ def vendor_required(fn):
 def adminIDG():
     lastid = Usuarios.query.filter_by(rol="admin").order_by(Usuarios.id.desc()).first()
     if lastid is None:
-        return 1
+        return 0
     else:
-        return lastid.id + 1
+        return lastid.id + 11
 
 def vendedorIDG(admin_id, tienda_id):
     print(admin_id)
     print(tienda_id)
     last_vendedor = Usuarios.query.filter_by(rol="vendedor").where(Usuarios.tienda_id == tienda_id).order_by(Usuarios.id.desc()).first()
     print(last_vendedor)
-    if last_vendedor:
-        new_id = last_vendedor.id + 1/100
+    if last_vendedor>admin_id and last_vendedor <= admin_id+9:
+        new_id = last_vendedor.id + 1
         return new_id
+    elif last_vendedor>admin_id+9:
+        return jsonify("No se pueden agregar mas vendedores a esta tienda"), 400
     else:
-        primer_vendedor = float(admin_id) + 1/10 * float(tienda_id) + 1/100
+        primer_vendedor =  admin_id + 1
         return primer_vendedor
 
 
@@ -67,7 +69,10 @@ def nuevoAdministrador():
         return jsonify("You need to specify the request body as a json object", status_code=400)
     tienda_id = request_body.get("tienda_id")
     if not tienda_id:
-        usuario = Usuarios(id=adminIDG(), nombre=request_body["nombre"], apellido=request_body["apellido"], email=request_body["email"], contraseña=request_body["contraseña"], rol="admin", is_active=True)
+        usuario = Usuarios(id=adminIDG(), nombre=request_body["nombre"],
+                            apellido=request_body["apellido"], email=request_body["email"],
+                            contraseña=request_body["contraseña"], rol="admin", is_active=True,
+                            fecha_contratacion=datetime.now())
         expires = timedelta(hours=1)
         token = create_access_token(identity=usuario.id, expires_delta=expires)
         if token:
@@ -77,7 +82,10 @@ def nuevoAdministrador():
             return jsonify("Error al crear usuario", status_code=400)
         return jsonify(token), 201
     else:
-        usuario = Usuarios(id=adminIDG(), nombre=request_body["nombre"], apellido=request_body["apellido"], email=request_body["email"], contraseña=request_body["contraseña"], tienda_id = request_body["tienda_id"], rol="admin", is_active=True)
+        usuario = Usuarios(id=adminIDG(), nombre=request_body["nombre"],
+                            apellido=request_body["apellido"], email=request_body["email"],
+                            contraseña=request_body["contraseña"], tienda_id = request_body["tienda_id"],
+                            rol="admin", is_active=True)
         db.session.add(usuario)
         db.session.commit()
         expires = datetime.timedelta(hours=1)
@@ -90,10 +98,27 @@ def nuevoVendedor():
     request_body = request.get_json()
     if request_body is None:
         return jsonify("You need to specify the request body as a json object", status_code=400)
-    usuario = Usuarios(id=vendedorIDG(get_jwt_identity(),request_body["tienda_id"]), nombre=request_body["nombre"], apellido=request_body["apellido"], email=request_body["email"], contraseña=contraseñaAleatoria(), rol="vendedor", tienda_id=request_body["tienda_id"], is_active=True)
+    usuario = Usuarios(id=vendedorIDG(get_jwt_identity() ,request_body["tienda_id"])
+                        ,nombre=request_body["nombre"], apellido=request_body["apellido"],
+                        email=request_body["email"], contraseña=contraseñaAleatoria(), rol="vendedor",
+                        tienda_id=request_body["tienda_id"], is_active=True, fecha_contratacion=datetime.now())
     db.session.add(usuario)
     db.session.commit()
     return jsonify(usuario.serialize()), 201
+
+@api.route('/usuario/<float:vndr_id>/horarios', methods=['GET'])
+@admin_required
+def asignarHorarios(vndr_id):
+    data = request.json
+    nuevo_horario = Horario(
+        usuario_id=vndr_id,
+        dia_semana=data['dia_semana'],
+        hora_inicio=datetime.strptime(data['hora_inicio'], '%H:%M').time(),
+        hora_fin=datetime.strptime(data['hora_fin'], '%H:%M').time()
+    )
+    db.session.add(nuevo_horario)
+    db.session.commit()
+    return jsonify(nuevo_horario.serialize()), 201
 
 @api.route('/usuario/actDatosA', methods=['PUT'])
 @admin_required
@@ -106,10 +131,9 @@ def actualizarDatosAdmin():
     usuario = Usuarios.query.get(request_body["id"])
     if usuario is None:
         return jsonify("User not found", status_code=404)
-    usuario.nombre = request_body["nombre"]
-    usuario.apellido = request_body["apellido"]
-    usuario.email = request_body["email"]
-    usuario.contraseña = request_body["contraseña"]
+    for key, value in request_body.items():
+        if key != 'id' and hasattr(usuario, key):
+            setattr(usuario, key, value)
     db.session.commit()
     return jsonify(usuario.serialize()), 200
 
