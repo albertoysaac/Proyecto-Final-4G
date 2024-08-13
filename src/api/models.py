@@ -114,7 +114,7 @@ class Categoria(db.Model):
 
 class Inventario(db.Model):
     inventario_id = db.Column(db.Integer, primary_key=True)
-    tienda_id = db.Column(db.Integer, db.ForeignKey('tienda.id'), unique=True) 
+    tienda_id = db.Column(db.Integer, db.ForeignKey('tienda.id'), unique=True)
     cantidad = db.Column(db.Integer, nullable=False)
     producto_id = db.Column(db.Integer, db.ForeignKey('producto.id'), nullable=False)
     producto = db.relationship('Producto', backref=db.backref('inventario', lazy='dynamic'))

@@ -106,6 +106,14 @@ def nuevoVendedor():
     db.session.commit()
     return jsonify(usuario.serialize()), 201
 
+def contraseñaAleatoria():
+    import random
+    import string
+    longitud = 8
+    valores = string.ascii_letters + string.digits
+    contraseña = ''.join([random.choice(valores) for i in range(longitud)])
+    return contraseña
+
 @api.route('/usuario/<float:vndr_id>/horarios', methods=['GET'])
 @admin_required
 def asignarHorarios(vndr_id):
@@ -180,6 +188,11 @@ def misVendedores():
     vendedores = list(map(lambda vendedor: vendedor.serialize(), vendedores))
     return jsonify(vendedores), 200
 
+@api.route('/tienda/<int:tienda_id>' , methods=['GET'])
+@jwt_required
+def inicio(tienda_id):
+    tienda = Tienda.query.get(tienda_id)
+    return jsonify(tienda.serialize()), 200
 
 #paso 2 crear una tienda
 @api.route('/crearTienda', methods=['POST'])
@@ -197,40 +210,33 @@ def nuevaTienda():
     print(adminTienda)
     return jsonify(tienda.serialize()), 201
 
-#paso 3 asignar un admin a una tienda
-@api.route('/tiendasadmin/<int:user_id>', methods=['POST'])
-def asignarAdmin(user_id):
-    request_body = request.get_json()
-    if request_body is None:
-        return jsonify({"message": "You need to specify the request body as a json object"}), 400
-    admin = Usuarios.query.get(user_id)
-    if admin is None:
-        return jsonify({"message": "User not found"}), 404
-    tienda = Tienda.query.get(request_body["tienda_id"])
-    if tienda is None:
-        return jsonify({"message": "Tienda not found"}), 404
-    adminTienda = AdminTiendas(admin_id=admin.id, tienda_id=tienda.id)
-    db.session.add(adminTienda)
-    db.session.commit()
-    return jsonify({"message": "Admin assigned to tienda successfully"}), 201
+# paso 3 asignar un admin a una tienda
+# @api.route('/tiendasadmin/<int:user_id>', methods=['POST'])
+# def asignarAdmin(user_id):
+#     request_body = request.get_json()
+#     if request_body is None:
+#         return jsonify({"message": "You need to specify the request body as a json object"}), 400
+#     admin = Usuarios.query.get(user_id)
+#     if admin is None:
+#         return jsonify({"message": "User not found"}), 404
+#     tienda = Tienda.query.get(request_body["tienda_id"])
+#     if tienda is None:
+#         return jsonify({"message": "Tienda not found"}), 404
+#     adminTienda = AdminTiendas(admin_id=admin.id, tienda_id=tienda.id)
+#     db.session.add(adminTienda)
+#     db.session.commit()
+#     return jsonify({"message": "Admin assigned to tienda successfully"}), 201
 
-
-def contraseñaAleatoria():
-    import random
-    import string
-    longitud = 8
-    valores = string.ascii_letters + string.digits
-    contraseña = ''.join([random.choice(valores) for i in range(longitud)])
-    return contraseña
 
 #paso 5 consultar un producto por codigo de barras
-@api.route('/productoCB', methods=['POST'])
+@api.route('/productoCB', methods=['PUT'])
 def consultarProducto():
     request_body = request.get_json()
     if request_body is None:
         return jsonify("You need to specify the request body as a json object", status_code=400)
     codigoBarras = request_body["codigoBarras"]
-    producto = lector.product.get(codigoBarras, fields=["code", "product_name", "categories", "description", "brands", "price",])
+    print(codigoBarras)
+    producto = lector.product.get(codigoBarras ) #,fields=["code", "product_name"]
     print(producto)
     return jsonify(producto), 200
 
@@ -249,10 +255,24 @@ def agregarProducto():
     db.session.commit()
     return jsonify(inventario.serialize()), 201
 
+#todo: retornar uno 
+@api.route('/inventario', methods=['GET'])
+@jwt_required
+def inventario_tienda():
+    usuario = Usuarios.query.get(get_jwt_identity)
+    if usuario.tienda_id:
+        inventario = Inventario.query.filter_by(tienda_id = usuario.tienda_id)
+        return jsonify(inventario.serialize(), 200)
+    else:
+        tiendas_id = AdminTiendas.tienda_id.query.filter_by(admin_id = usuario.id).all()
+        inventarios = []
+        for id in tiendas_id:
+            inventarios.append(Inventario.query.filter_by(tienda_id = id))
+        return inventario.serialize()
+
 @api.route('/inventario/agregar', methods=['POST'])
 @vendor_required
 def agregar_inventario():
-    
     data = request.json
     producto_id = data.get('producto_id')
     cantidad = data.get('cantidad')
@@ -262,9 +282,18 @@ def agregar_inventario():
     else:
         inventario = Inventario(tienda_id=data["tienda_id"], producto_id=producto_id, cantidad=cantidad)
         db.session.add(inventario)
-    
     db.session.commit()
     return jsonify({"message": "Inventario actualizado"}), 200
+
+@api.route('/inventario/editar/<int:inventario_id>', methods=['PUT'])
+def editar_inventario(inventario_id):
+    data = request.json
+    stock = Inventario.query.get(inventario_id)
+    stock.cantidad = data['cantidad']
+    stock.producto_id = data['producto_id']
+    db.session.commit()
+    return jsonify(stock.serialize()), 200
+
 
 
 @api.route('/login', methods=['POST'])
