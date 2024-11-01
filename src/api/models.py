@@ -6,10 +6,11 @@ class Tienda(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(120), nullable=False)
     direccion = db.Column(db.String(120), nullable=False)
+    hora_apertura = db.Column(db.Time, nullable=False)
+    hora_cierre = db.Column(db.Time, nullable=False)
     usuarios = db.relationship('Usuarios', backref='tienda')
     inventario = db.relationship('Inventario', backref='tienda')
     finanzas = db.relationship('Ticket', backref='tienda')
-    AdminTiendas = db.relationship('AdminTiendas', backref='tienda', lazy=True)
     
     def __repr__(self):
         return f'<Tienda {self.nombre}>'
@@ -19,7 +20,7 @@ class Tienda(db.Model):
             "id": self.id,
             "nombre": self.nombre,
             "direccion": self.direccion,
-            "administradores": [usuario.serialize() for usuario in self.usuarios if usuario.role == "admin"],
+            "administradores": [usuario.serialize() for usuario in self.usuarios if usuario.role == "admin" or usuario.role == "ceo"],
             "vendedores": [usuario.serialize() for usuario in self.usuarios if usuario.role == "vendedor"],
             "inventario": [producto.serialize() for producto in self.inventario]
         }
@@ -31,11 +32,11 @@ class Usuarios(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     contraseña = db.Column(db.String(80), nullable=False)
     rol = db.Column(db.String(80), nullable=False)
-    tienda_id = db.Column(db.Integer, db.ForeignKey('tienda.id'))
+    tienda_id = db.Column(db.Integer, db.ForeignKey('tienda.id'), nullable=False)
     is_active = db.Column(db.Boolean(), nullable=False)
     fecha_contratacion = db.Column(db.Date, nullable=False)
-    horarios = db.relationship('Horario', backref='usuario', lazy=True)
-    AdminTiendas = db.relationship('AdminTiendas', backref='usuario', lazy=True)
+    hora_entrada = db.Column(db.Time, nullable=False)
+    hora_salida = db.Column(db.Time, nullable=False)
     
     def __repr__(self):
         return f'<Usuarios {self.email}>'
@@ -47,39 +48,12 @@ class Usuarios(db.Model):
             "apellido": self.apellido,  
             "email": self.email,
             "rol": self.rol,  
-            "tienda": self.tienda.nombre if self.tienda else None,  
-            "fecha_contratacion": self.fecha_contratacion,
-            "horarios": [{"dia_semana": horario.dia_semana, "hora_inicio": horario.hora_inicio, "hora_fin": horario.hora_fin} for horario in self.horarios] if self.horarios else [],
+            "tienda": self.tienda.nombre,  
+            "fecha_contratacion": self.fecha_contratacion.strftime('%Y-%m-%d'),
+            "hora_entrada": self.hora_entrada.strftime('%H:%M:%S'),
+            "hora_salida": self.hora_salida.strftime('%H:%M:%S')
         }
         
-class Horario(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
-    dia_semana = db.Column(db.Integer, nullable=False)  # 0-6 para lunes-domingo
-    hora_inicio = db.Column(db.Time, nullable=False)
-    hora_fin = db.Column(db.Time, nullable=False)
-    
-    def __repr__(self):
-        return f'<Horario {self.dia_semana} {self.hora_inicio}-{self.hora_fin}>'
-    
-    def serialize(self):
-        return {
-            "id": self.id,
-            "dia_semana": self.dia_semana,
-            "hora_inicio": self.hora_inicio,
-            "hora_fin": self.hora_fin
-        }
-class AdminTiendas(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    admin_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
-    tienda_id = db.Column(db.Integer, db.ForeignKey('tienda.id'))
-    
-    def serialize(self):
-        return {
-            "id": self.id,
-            "admin_id": self.admin_id,
-            "tienda_id": self.tienda_id
-        }
     
 class Producto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -115,8 +89,8 @@ class Categoria(db.Model):
 class Inventario(db.Model):
     inventario_id = db.Column(db.Integer, primary_key=True)
     tienda_id = db.Column(db.Integer, db.ForeignKey('tienda.id'), unique=True)
-    cantidad = db.Column(db.Integer, nullable=False)
-    producto_id = db.Column(db.Integer, db.ForeignKey('producto.id'), nullable=False)
+    cantidad = db.Column(db.Integer, nullable=True)
+    producto_id = db.Column(db.Integer, db.ForeignKey('producto.id'), nullable=True)
     producto = db.relationship('Producto', backref=db.backref('inventario', lazy='dynamic'))
     
     def serialize(self):
