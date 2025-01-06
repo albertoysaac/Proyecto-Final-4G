@@ -24,29 +24,17 @@ module.exports = merge(common, {
     devServer: {
         port,
         hot: true,
+        liveReload: false,
+        watchFiles: ['src/**/*'],
         allowedHosts: "all",
         historyApiFallback: true,
         static: {
           directory: path.resolve(__dirname, "dist"),
         },
         client: {
-          webSocketURL: publicUrl
+          webSocketURL: publicUrl,
+          overlay: true,
+          progress: true
         },
     },
-    plugins: [
-        // new FriendlyErrorsWebpackPlugin(),
-        // new ErrorOverlayPlugin(),
-        // new PrettierPlugin({
-        //     parser: "babylon",
-        //     printWidth: 120,             // Specify the length of line that the printer will wrap on.
-        //     tabWidth: 4,                // Specify the number of spaces per indentation-level.
-        //     useTabs: true,              // Indent lines with tabs instead of spaces.
-        //     bracketSpacing: true,
-        //     extensions: [ ".js", ".jsx" ],
-        //     jsxBracketSameLine: true,
-        //     semi: true,                 // Print semicolons at the ends of statements.
-        //     encoding: 'utf-8'           // Which encoding scheme to use on files
-        // }),
-        new webpack.HotModuleReplacementPlugin()
-    ]
 });

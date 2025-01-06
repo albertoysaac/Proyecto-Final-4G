@@ -20,12 +20,12 @@ module.exports = {
           use: ['babel-loader']
         },
         {
-          test: /\.(css|scss)$/, use: [{
-              loader: "style-loader" // creates style nodes from JS strings
-          }, {
-              loader: "css-loader" // translates CSS into CommonJS
-          }]
-        }, //css only files
+          test: /\.(css|scss)$/, 
+          use: [
+              'style-loader',
+              'css-loader'
+          ]
+      },
         {
           test: /\.(png|svg|jpg|gif|jpeg|webp)$/, use: {
             loader: 'file-loader',
@@ -39,6 +39,7 @@ module.exports = {
     extensions: ['*', '.js']
   },
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
         favicon: '4geeks.ico',
         template: 'template.html'

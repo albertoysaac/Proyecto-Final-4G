@@ -1,12 +1,14 @@
-// src/front/js/pages/Login.jsx
-import React, { useState } from 'react';
-const Login = () => {
+import React from 'react';
+import { useState, useContext } from "react";
+import { Context } from "../store/appContext";
+
+
+export const Login = () => {
+	const { store, actions } = useContext(Context);
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const handleSubmit = (event) => {
-		event.preventDefault();
-		// Aquí realizarías la lógica de autenticación
-		console.log('Usuario:', username, 'Contraseña:', password);
+		actions.login({'username': username, 'password': password});
 	};
 	return (
 		<div className="container">
@@ -37,4 +39,3 @@ const Login = () => {
 		</div>
 	);
 };
-export default Login;
