@@ -6,9 +6,12 @@ export const AuthPortal = () => {
     const [showLogin, setShowLogin] = useState(true);
 
     return (
-        <div className="container">
+        <div className="container bg-background text-foreground">
             <div className="row min-vh-100 justify-content-center align-items-center">
                 <div className="col-12 col-md-6 text-center">
+                    <div>
+                        {showLogin ? <Login /> : <Register />}
+                    </div>
                     <div className="mb-4">
                         <button 
                             className={`btn mx-2 ${showLogin ? 'btn-primary' : 'btn-outline-primary'}`}
@@ -24,9 +27,6 @@ export const AuthPortal = () => {
                         </button>
                     </div>
                     
-                    <div>
-                        {showLogin ? <Login /> : <Register />}
-                    </div>
                 </div>
             </div>
         </div>

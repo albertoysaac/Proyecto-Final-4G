@@ -1,19 +1,21 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
+			areaDeTrabajo: {
+				datosTienda: {
+					nombre: "",
+					direccion: "",
+					inventario: [],
+					administradores: [],
+					empleados: [],
+					historial: [],
 				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
+				usuario: {
+					email: "",
+					nombre: "",
+					rol: "",
 				}
-			]
+			},
 		},
 		actions: {
 			
@@ -65,17 +67,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			queryhandler: async (method, route, id, data) => {
-				const url = process.env.BACKEND_URL + "api/" + route;
+				const url = process.env.BACKEND_URL + route;
 				console.log("peticion: " + url);
 				const resquestParams = getActions().requestParams(method, data);
-				//console.log(resquestParams);
+				
 				return fetch(url + id, resquestParams)
 					.then((response) => {
 						try {
 							let isOk = response.ok;
-							//console.log(response);
+							
 							return response.json().then((data) => {
-								//console.log(data);
+								
 								return { status: isOk, data: data };
 							});
 						} catch (error) {
@@ -91,7 +93,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						localStorage.setItem("jwt", getStore().jwt);
 						localStorage.setItem("name", getStore().loggedUser.name);
 						localStorage.setItem("email", getStore().loggedUser.email);
-						localStorage.setItem("id", getStore().loggedUser.id)
 						console.log(data.user.roles);
 						console.log(JSON.stringify(data.user.roles));
 						localStorage.setItem("roles", JSON.stringify(data.user.roles));
@@ -116,7 +117,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 
 			},
-			
+			nuevaTienda:(datos)=>{
+				return getActions().queryhandler("POST", "registro/inicial", "", datos)
+					.then(({ status, data }) => {
+						console.log(status);
+						console.log(data);   //data:
+											// "message": "Registro exitoso",
+											// "token": token,
+											// "tienda": nueva_tienda.serialize(),
+											// "usuario": nuevo_ceo.serialize()
+						return getActions().getWorkflow();
+					});
+			}
 		}
 	};
 };

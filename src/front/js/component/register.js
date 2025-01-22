@@ -1,77 +1,211 @@
-import React, { useState } from 'react';
-import { useContext } from "react";
-import { Context } from "../store/appContext";
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Context } from '../store/appContext';
 
 export const Register = () => {
-	const { store, actions } = useContext(Context);
-	const [email, setEmail] = useState('');
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
+    const navigate = useNavigate();
+    const [step, setStep] = useState(1);
+	const { actions } = useContext(Context);
+    
+    // Datos tienda
+    const [tiendaData, setTiendaData] = useState({
+        nombre: '',
+        direccion: '',
+        hora_apertura: '',
+        hora_cierre: ''
+    });
 
-	const handleSubmit = (event) => {
-		event.preventDefault();
-		if (password !== confirmPassword) {
-			alert("Las contraseñas no coinciden");
-			return;
-		}
-		actions.register({
-			'email': email,
-			'username': username,
-			'password': password
+    // Datos usuario
+    const [userData, setUserData] = useState({
+        nombre: '',
+        apellido: '',
+        email: '',
+        contraseña: '',
+        fecha_contratacion: new Date().toISOString().split('T')[0],
+        hora_entrada: '',
+        hora_salida: ''
+    });
+
+    const handleTiendaChange = (e) => {
+        setTiendaData({
+            ...tiendaData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleUserChange = (e) => {
+        setUserData({
+            ...userData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        actions.nuevaTienda({
+			tienda: tiendaData,
+			usuario: userData
 		});
-	};
+		
+    };
 
-	return (
-		<div className="container">
-			<h2>Registro de Usuario</h2>
-			<form onSubmit={handleSubmit}>
-				<div className="mb-3">
-					<label htmlFor="email" className="form-label">Email:</label>
-					<input 
-						type="email" 
-						className="form-control" 
-						id="email" 
-						value={email} 
-						onChange={(e) => setEmail(e.target.value)}
-						required 
-					/>
-				</div>
-				<div className="mb-3">
-					<label htmlFor="username" className="form-label">Usuario:</label>
-					<input 
-						type="text" 
-						className="form-control" 
-						id="username" 
-						value={username} 
-						onChange={(e) => setUsername(e.target.value)}
-						required 
-					/>
-				</div>
-				<div className="mb-3">
-					<label htmlFor="password" className="form-label">Contraseña:</label>
-					<input 
-						type="password" 
-						className="form-control" 
-						id="password" 
-						value={password} 
-						onChange={(e) => setPassword(e.target.value)}
-						required 
-					/>
-				</div>
-				<div className="mb-3">
-					<label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña:</label>
-					<input 
-						type="password" 
-						className="form-control" 
-						id="confirmPassword" 
-						value={confirmPassword} 
-						onChange={(e) => setConfirmPassword(e.target.value)}
-						required 
-					/>
-				</div>
-				<button type="submit" className="btn btn-primary">Registrarse</button>
-			</form>
-		</div>
-	);
+    return (
+            <div className="row justify-content-center">
+                <div className="card">
+                    <div className="card-body">
+                        <h2 className="text-center mb-5">Registro de Nueva Tienda</h2>
+                        <h4 className='mb-2'>Paso 1: Datos de la Tienda</h4>
+                        
+                        {step === 1 ? (
+                            <>
+                                <form className='d-flex flex-column'>
+                                    
+                                    <div className="row mb-3">
+                                        <label className="form-label">Nombre de la Tienda</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="nombre"
+                                            value={tiendaData.nombre}
+                                            onChange={handleTiendaChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="row mb-3">
+                                        <label className="form-label">Dirección</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="direccion"
+                                            value={tiendaData.direccion}
+                                            onChange={handleTiendaChange}
+                                            required="required"
+                                        />
+                                    </div>
+                                    
+                                    <div className="row mb-3">
+                                        <div className="col">
+                                            <label className="form-label">Hora de Apertura</label>
+                                            <input
+                                                type="time"
+                                                className="form-control"
+                                                name="hora_apertura"
+                                                value={tiendaData.hora_apertura}
+                                                onChange={handleTiendaChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="col">
+                                            <label className="form-label">Hora de Cierre</label>
+                                            <input
+                                                type="time"
+                                                className="form-control"
+                                                name="hora_cierre"
+                                                value={tiendaData.hora_cierre}
+                                                onChange={handleTiendaChange}
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary w-100"
+                                        onClick={() => setStep(2)}
+                                    >
+                                        Siguiente
+                                    </button>
+                                </form>
+                            </>
+                        ) : (
+                            <>
+                                <h4>Paso 2: Datos del Administrador</h4>
+                                <form onSubmit={handleSubmit}>
+                                    <div className="mb-3">
+                                        <label className="form-label">Nombre</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="nombre"
+                                            value={userData.nombre}
+                                            onChange={handleUserChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Apellido</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="apellido"
+                                            value={userData.apellido}
+                                            onChange={handleUserChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Email</label>
+                                        <input
+                                            type="email"
+                                            className="form-control"
+                                            name="email"
+                                            value={userData.email}
+                                            onChange={handleUserChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Contraseña</label>
+                                        <input
+                                            type="password"
+                                            className="form-control"
+                                            name="contraseña"
+                                            value={userData.contraseña}
+                                            onChange={handleUserChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Hora de Entrada</label>
+                                        <input
+                                            type="time"
+                                            className="form-control"
+                                            name="hora_entrada"
+                                            value={userData.hora_entrada}
+                                            onChange={handleUserChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Hora de Salida</label>
+                                        <input
+                                            type="time"
+                                            className="form-control"
+                                            name="hora_salida"
+                                            value={userData.hora_salida}
+                                            onChange={handleUserChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="d-flex gap-2">
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary w-50"
+                                            onClick={() => setStep(1)}
+                                        >
+                                            Atrás
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="btn btn-primary w-50"
+                                        >
+                                            Registrar
+                                        </button>
+                                    </div>
+                                </form>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
+    );
 };

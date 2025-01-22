@@ -7,7 +7,10 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db
-from api.routes import api
+from api.routes.general import api
+from api.routes.vendedor import vendedor
+from api.routes.admon import admon
+from api.routes.ceo import ceo
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
@@ -15,6 +18,7 @@ from flask_cors import CORS
 # from models import Person
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
+os.environ['FLASK_APP'] = 'src/app.py'
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
@@ -43,10 +47,12 @@ setup_commands(app)
 
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
+app.register_blueprint(vendedor, url_prefix='/api/vendedor')
+app.register_blueprint(admon, url_prefix='/api/admon')
+app.register_blueprint(ceo, url_prefix='/api/ceo')
+
 
 # Handle/serialize errors like a JSON object
-
-
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
