@@ -14,10 +14,7 @@ export async function scrapping(codigoDeBarras) {
                     const disponible = el.querySelector('.fG8Fp.uo4vr')?.textContent || '';
                     let linkEspecifico = '';
                     
-                    const dominiosPermitidos = [
-                        '.mx', 'walmart', 'amazon', 'mercadolibre', 
-                        'coppel', 'samsclub', 'bodegaaurrera'
-                    ];
+                    
                     
                     if (dominiosPermitidos.some(d => dominio.toLowerCase().includes(d))) {
                         linkEspecifico = el.querySelector('a')?.getAttribute('href') || '';

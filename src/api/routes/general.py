@@ -163,7 +163,7 @@ def login():
     if usuario is None:
         return jsonify("Invalid email or contraseña", status_code=401)
     access_token = create_access_token(identity=usuario.email)
-    return jsonify(access_token=access_token), 200
+    return jsonify(access_token=access_token, datos = usuario.serialize()), 200
 
 @api.route('/user/<string:user_email>', methods=['GET'])
 @vendedor_required

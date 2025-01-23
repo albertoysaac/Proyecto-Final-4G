@@ -1,6 +1,17 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			usuariofirmado: {
+				nombre: "",
+				apellido: "Pérez",
+				email: "",
+				rol: "",
+				access_token: "",
+				fecha_contratacion: "",
+				hora_entrada: "",
+				hora_salida: "",
+				autoridades: []
+			},
 			areaDeTrabajo: {
 				datosTienda: {
 					nombre: "",
@@ -87,16 +98,41 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			login: (data) => {
-				return getActions().queryhandler("POST", "login/", "", data)
+				return getActions().queryhandler("POST", "api/login", "", data)
 					.then(({ status, data }) => {
-						setStore({ loggedUser: data.user, jwt: data.jwt });
-						localStorage.setItem("jwt", getStore().jwt);
-						localStorage.setItem("name", getStore().loggedUser.name);
-						localStorage.setItem("email", getStore().loggedUser.email);
-						console.log(data.user.roles);
-						console.log(JSON.stringify(data.user.roles));
-						localStorage.setItem("roles", JSON.stringify(data.user.roles));
-						return getActions().getWorkflow();
+						if (status){
+							setStore({
+								usuariofirmado: {
+									nombre: data.datos.nombre,
+									apellido: data.datos.apellido,
+									email: data.datos.email,
+									access_token: data.access_token,
+									fecha_contratacion: data.datos.fecha_contratacion,
+									hora_entrada: data.datos.hora_entrada,
+									hora_salida: data.datos.hora_salida,
+									autoridades: data.datos.autoridades
+								}
+							});
+
+							if (data.datos.autoridades && data.datos.autoridades.length > 0) {
+								const primeraTienda = data.datos.autoridades[0];
+								setStore({
+									areaDeTrabajo: {
+										datosTienda: {
+											id: primeraTienda.tienda.id,
+											nombre: primeraTienda.tienda.nombre,
+										},
+										usuario: {
+											email: data.datos.email,
+											nombre: data.datos.nombre,
+											rol: primeraTienda.rol
+										}
+									}
+								});
+							}
+							return status;
+						}
+
 					});
 
 			},
