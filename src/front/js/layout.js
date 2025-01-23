@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
-import { Home } from "./pages/home";
+import { Dashboard } from "./pages/Dashboard/dashboard";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import { AuthPortal } from "./pages/authPortal";
@@ -31,7 +31,7 @@ const Layout = () => {
             <Route path="/crm/*" element={
                 <>
                     <Routes>
-                        <Route path="/home" element={<Home />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/demo" element={<Demo />} />
                         <Route path="/single/:theid" element={<Single />} />
                         <Route path="/*" element={<h1>Not found!</h1>} />

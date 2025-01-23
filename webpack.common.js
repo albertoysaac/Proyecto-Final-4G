@@ -20,10 +20,11 @@ module.exports = {
           use: ['babel-loader']
         },
         {
-          test: /\.(css|scss)$/, 
+          test: /\.css$/, 
           use: [
               'style-loader',
-              'css-loader'
+              'css-loader',
+              'postcss-loader'
           ]
       },
         {
@@ -36,7 +37,15 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['*', '.js']
+    extensions: ['*', '.js'],
+    alias: {
+      '@': path.resolve(__dirname, 'src/front'),
+      '@components': path.resolve(__dirname, 'src/front/js/component'),
+      '@ui': path.resolve(__dirname, 'src/front/js/component/ui'),
+      '@utils': path.resolve(__dirname, 'src/front/js/lib/utils.js'),
+      '@lib': path.resolve(__dirname, 'src/front/js/lib'),
+      '@hooks': path.resolve(__dirname, 'src/front/js/hooks')
+    }
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),

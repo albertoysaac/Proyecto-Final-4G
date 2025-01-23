@@ -1,69 +1,125 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 import { CardComentarios } from '../component/cardComentarios';
+import logo from '../../img/hurricane.svg';
 
 export const LandingPage = () => {
-    return (
-        <div >
-            <section className="seccion-p-d contairner-fluid w-100 h-80" id="top">
-                <div className="container">
-                    <div className="text-center d-flex flex-column align-items-center">
-                        <h1>Descubre <strong>Tiendita CRM</strong> el futuro de las aplicaciones administrativas, y la mas utilizada por tienditas miselaneas por todo México</h1>
-                        <p>Mas de 10 mil tiendas ya descubrieron como Tiendita CRM ha revolucionado la manera de controlar el inventario, las ventas, 
-                            y como potenciar su crecimiento de la mano de sus potentes herramientas de analiticas.</p>
-                        <div className="data-container">
-                            <Link to="/authPortal" className="btnComenzar"><span>Comenzar</span></Link>
-                        </div>
-                    </div>
-                    
-                </div>
-            </section>
-            <section className="|" id="features">
-                <div className=' container-fluid seccion-e row'>
-                    <div id="carouselExampleIndicators" className="carousel slide container">
-                        <div className="carousel-indicators">
-                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                        </div>
+    const testimonios = [
+        {
+            nombre: "María González",
+            cargo: "Dueña de Abarrotes La Esperanza",
+            comentario: "Desde que implementamos CRMiTiendita, nuestro control de inventario mejoró un 80%."
+        },
+        {
+            nombre: "Carlos Rodríguez",
+            cargo: "Gerente de Minisuper Express",
+            comentario: "La facilidad para gestionar múltiples sucursales es increíble. Ahorro tiempo y dinero."
+        },
+        {
+            nombre: "Ana Martínez",
+            cargo: "Propietaria de Farmacia del Barrio",
+            comentario: "El soporte técnico es excelente y el sistema es muy intuitivo."
+        },
+        {
+            nombre: "Juan López",
+            cargo: "Administrador de Tienda de Conveniencia",
+            comentario: "Las alertas de stock bajo nos han ayudado a mantener siempre producto disponible."
+        },
+        {
+            nombre: "Patricia Torres",
+            cargo: "Dueña de Papelería Central",
+            comentario: "Los reportes de ventas me ayudan a tomar mejores decisiones de compra."
+        },
+        {
+            nombre: "Roberto Sánchez",
+            cargo: "Gerente de Ferretería El Martillo",
+            comentario: "La integración con el punto de venta es perfecta. Todo sincronizado."
+        }
+    ];
 
-                        <div className="carousel-inner">
-                            <div className="carousel-item active">
-                                <img src="https://picsum.photos/201/300" className="d-block" alt="..."/>
-                            </div>
-                            <div className="carousel-item">
-                                <img src="https://picsum.photos/200/301" className="d-block " alt="..."/>
-                            </div>
-                            <div className="carousel-item">
-                                <img src="https://picsum.photos/202/300" className="d-block " alt="..."/>
-                            </div>
-                        </div>
-                        <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span className="visually-hidden">Previous</span>
-                        </button>
-                        <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span className="visually-hidden">Next</span>
-                        </button>
-                    </div>  
+    return (
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+            {/* Hero Section */}
+            <section className="relative overflow-hidden bg-gradient-to-b from-lime-600 to-lime-800 dark:from-green-900 dark:to-green-950">
+            <div className="absolute inset-0 bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
+                <div className="container mx-auto px-4 py-24 relative">
+                    <div className="text-center max-w-4xl mx-auto space-y-8">
+                        <h1 className="text-4xl md:text-6xl font-bold text-white">
+                            Descubre <span className="text-yellow-400">CRMiTiendita</span>
+                        </h1>
+                        <p className="text-xl text-white/90 leading-relaxed">
+                            Más de 10 mil tiendas ya descubrieron cómo Tiendita CRM 
+                            ha revolucionado la manera de controlar el inventario y las ventas.
+                        </p>
+                        <Link 
+                            to="/authPortal"
+                            className="inline-block px-8 py-4 text-lg font-semibold 
+                                     bg-yellow-500 hover:bg-yellow-400 
+                                     text-gray-900 rounded-full 
+                                     transform hover:scale-105 
+                                     transition-all duration-300 
+                                     shadow-lg hover:shadow-xl"
+                        >
+                            Comenzar Ahora
+                        </Link>
+                    </div>
                 </div>
             </section>
-            <div className="seccion-c" id="comentarios">
-                <div className="row">
-                    <div className="col">
-                        <CardComentarios key={1} datos = {{nombre: "alberto", cargo: "Coca-Cola CEO", comentario: "excelente aplicacion"}} />
-                        <CardComentarios key={2} datos = {{nombre: "isaac", cargo: "Facebook CEO", comentario: "me encanta la app"}}/>
-                    </div>
-                    <div className="col">
-                        <CardComentarios key={3} datos = {{nombre: "carlos", cargo: "space-x engennier", comentario: "lo mejor que he visto"}}/>
+
+            {/* Features Section */}
+            <section className="py-20 bg-white dark:bg-gray-800">
+                <div className="container mx-auto px-4">
+                    <div className="max-w-6xl mx-auto">
+                        <div id="carouselExampleIndicators" 
+                             className="relative rounded-2xl shadow-2xl overflow-hidden">
+                            <div className="carousel-indicators absolute bottom-5 left-0 right-0 flex justify-center space-x-2">
+                                <button className="w-3 h-3 rounded-full bg-white/50 hover:bg-white/80 transition-colors"></button>
+                                <button className="w-3 h-3 rounded-full bg-white/50 hover:bg-white/80 transition-colors"></button>
+                                <button className="w-3 h-3 rounded-full bg-white/50 hover:bg-white/80 transition-colors"></button>
+                            </div>
+
+                            <div className="carousel-inner">
+                                <div className="carousel-item active">
+                                    <img 
+                                        src="https://picsum.photos/1200/600" 
+                                        className="w-full h-[600px] object-cover"
+                                        alt="Feature 1"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
+                                        <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                                            <h3 className="text-2xl font-bold mb-2">
+                                                Control de Inventario
+                                            </h3>
+                                            <p className="text-lg text-white/90">
+                                                Gestiona tu inventario de manera eficiente
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Repetir para otros slides */}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
+
+            {/* Testimonials Section */}
+            <section className="py-20 bg-gray-50 dark:bg-gray-900">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold text-center mb-12 
+                                 text-gray-900 dark:text-white">
+                        Lo que dicen nuestros clientes
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {testimonios.map((testimonio, index) => (
+                            <CardComentarios 
+                                key={index} 
+                                datos={testimonio} 
+                            />
+                        ))}
+                    </div>
+                </div>
+            </section>
         </div>
     );
 };
-
-if (module.hot) {
-    module.hot.accept();
-}
