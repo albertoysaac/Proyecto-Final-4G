@@ -2,15 +2,13 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+from datetime import timedelta
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db
-from api.routes.general import api
-from api.routes.vendedor import vendedor
-from api.routes.admon import admon
-from api.routes.ceo import ceo
+from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
@@ -39,7 +37,9 @@ db.init_app(app)
 
 # add the admin
 setup_admin(app)
-app.config["JWT_SECRET_KEY"] = os.getenv("JWT_KEY")  # Change this!
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_KEY")  # Cambia esto por una clave segura
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)  # Token de acceso expira en 15 minutos
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 jwt = JWTManager(app)
 
 # add the admin
@@ -47,9 +47,6 @@ setup_commands(app)
 
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
-app.register_blueprint(vendedor, url_prefix='/api/vendedor')
-app.register_blueprint(admon, url_prefix='/api/admon')
-app.register_blueprint(ceo, url_prefix='/api/ceo')
 
 
 # Handle/serialize errors like a JSON object
