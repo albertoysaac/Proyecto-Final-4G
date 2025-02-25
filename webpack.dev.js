@@ -37,4 +37,9 @@ module.exports = merge(common, {
           progress: true
         },
     },
+	resolve: {
+        fallback: {
+            path: require.resolve("path-browserify"),
+        },
+    },
 });

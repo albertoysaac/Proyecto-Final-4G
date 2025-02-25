@@ -59,8 +59,9 @@ export const LandingPage = () => {
                                      transform hover:scale-105 
                                      transition-all duration-300 
                                      shadow-lg hover:shadow-xl"
+                            state= {{ login: false}}
                         >
-                            Comenzar Ahora
+                            Registrarse y empezar
                         </Link>
                     </div>
                 </div>
