@@ -1,7 +1,12 @@
 {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "workbench.editorAssociations": {   
-        "*.md": "vscode.markdown.preview.editor"
-    }
+	"editor.formatOnSave": false,
+	"editor.tabSize": 4,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"workbench.editorAssociations": {
+		"*.md": "vscode.markdown.preview.editor"
+	},
+	"postman.settings.dotenv-detection-notification-visibility": false,
+	"[jsonc]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	}
 }

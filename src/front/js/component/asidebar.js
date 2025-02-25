@@ -1,102 +1,171 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { Context } from "../store/appContext";
+import { TiendaSelectionModal } from "./TiendaSelectionModal";
+import { UserProfileModal } from "../pages/Dashboard/componentes/modal/userProfileModal";
 
 export const Asidebar = () => {
-    const [isExpanded, setIsExpanded] = useState(false);
+  const { store, actions } = useContext(Context);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showTiendaModal, setShowTiendaModal] = useState(false);
+  const [showUserProfileModal, setShowUserProfileModal] = useState(false);
+  const location = useLocation();
+  const isCEO =
+    store.authdata?.rol === "ceo" || store.authdata?.autoridades?.rol === "ceo";
+  const isAdmin = store.authdata?.autoridades?.rol === "administrador";
 
-    return (
-        <aside 
-            className={`fixed left-0 top-0 h-screen 
-                       backdrop-blur-md bg-lime-600/65 dark:bg-green-900/65
-                       transition-all duration-300 ease-in-out
-                       border-r border-white/10
-                       ${isExpanded ? 'w-64' : 'w-16'}
-                       flex flex-col
-                       shadow-[4px_0_15px_rgba(0,0,0,0.1)]`}
-            onMouseEnter={() => setIsExpanded(true)}
-            onMouseLeave={() => setIsExpanded(false)}
-        >
-            <div className="p-4">
-                <i className="bi bi-justify text-2xl text-stone-900/50 cursor-pointer"></i>
-            </div>
+  const menuItems = {
+    ceo: [
+      {
+        path: "/dashboard/global",
+        icon: "bi-graph-up",
+        text: "Estadísticas Globales",
+      },
+      {
+        path: "/dashboard/inicio",
+        icon: "bi-speedometer2",
+        text: "Tienda",
+      },
+      {
+        path: "/dashboard/usuarios",
+        icon: "bi-people",
+        text: "Usuarios",
+      },
+      {
+        path: "/dashboard/ventas",
+        icon: "bi bi-cart3",
+        text: "Ventas",
+      },
+      {
+        path: "/dashboard/historial",
+        icon: "bi-clock-history",
+        text: "Historial",
+      },
+      {
+        path: "/dashboard/inventario",
+        icon: "bi-box-seam",
+        text: "Inventario",
+      },
+    ],
+    admin: [
+      {
+        path: "/dashboard/inicio",
+        icon: "bi-speedometer2",
+        text: "Tienda",
+      },
+      {
+        path: "/dashboard/usuarios",
+        icon: "bi-people",
+        text: "Usuarios",
+      },
+      {
+        path: "/dashboard/ventas",
+        icon: "bi bi-cart3",
+        text: "Ventas",
+      },
+      {
+        path: "/dashboard/historial",
+        icon: "bi-clock-history",
+        text: "Historial",
+      },
+      {
+        path: "/dashboard/inventario",
+        icon: "bi-box-seam",
+        text: "Inventario",
+      },
+    ],
+    vendedor: [
+      {
+        path: "/dashboard/inicio",
+        icon: "bi-speedometer2",
+        text: "Tienda",
+      },
+      {
+        path: "/dashboard/ventas",
+        icon: "bi-cart3",
+        text: "Ventas",
+      },
+      {
+        path: "/dashboard/inventario",
+        icon: "bi-box-seam",
+        text: "Inventario",
+      },
+    ],
+  };
+  // selecionar el menu dependiendo del rol
+  const currentMenu = isCEO
+    ? menuItems.ceo
+    : isAdmin
+    ? menuItems.admin
+    : menuItems.vendedor;
 
-            <nav className="flex-1 overflow-y-auto">
-                <ul className="space-y-2 py-4">
-                    <li>
-                        <Link to="/dashboard" 
-                              className="flex items-center px-4 py-3  text-stone-900/50
-                                       hover:bg-lime-400/70 transition-colors
-                                       group">
-                            <i className="bi bi-house-fill text-xl"></i>
-                            <span className={`ml-4 transition-opacity duration-300
-                                         ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
-                                Inicio
-                            </span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/perfil" 
-                              className="flex items-center px-4 py-3  text-stone-900/50
-                                       hover:bg-lime-400/70 transition-colors
-                                       group">
-                            <i className="bi bi-people-fill text-xl"></i>
-                            <span className={`ml-4 transition-opacity duration-300
-                                         ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
-                                Usuarios
-                            </span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/ventas" 
-                              className="flex items-center px-4 py-3  text-stone-900/50
-                                       hover:bg-lime-400/70 transition-colors
-                                       group">
-                            <i className="bi bi-cart4 text-xl"></i>
-                            <span className={`ml-4 transition-opacity duration-300
-                                         ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
-                                Ventas
-                            </span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/inventario" 
-                              className="flex items-center px-4 py-3  text-stone-900/50
-                                       hover:bg-lime-400/70 transition-colors
-                                       group">
-                            <i className="bi bi-box-seam text-xl"></i>
-                            <span className={`ml-4 transition-opacity duration-300
-                                         ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
-                                Inventario
-                            </span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/reportes" 
-                              className="flex items-center px-4 py-3  text-stone-900/50
-                                       hover:bg-lime-400/70 transition-colors
-                                       group">
-                            <i className="bi bi-graph-up text-xl"></i>
-                            <span className={`ml-4 transition-opacity duration-300
-                                         ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
-                                Reportes
-                            </span>
-                        </Link>
-                    </li>
-                </ul>
-            </nav>
-
-            <div className="p-4 mt-auto">
-                <Link to="/logout" 
-                      className="flex items-center px-4 py-3  text-stone-900/50
-                               hover:bg-lime-400/70 transition-colors
-                               group">
-                    <i className="bi bi-box-arrow-left text-xl"></i>
-                    <span className={`ml-4 transition-opacity duration-300
-                                 ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
-                        Cerrar Sesión
-                    </span>
-                </Link>
-            </div>
-        </aside>
-    );
+  return (
+    <>
+      <aside
+        className={`fixed inset-y-0 left-0 ${
+          isExpanded ? "w-64" : "w-16"
+        } bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300`}
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => setIsExpanded(false)}
+      >
+        <div className="h-full flex flex-col justify-between py-6">
+          <nav className="space-y-2">
+            {currentMenu.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) => `
+                                flex items-center ${
+                                  isExpanded
+                                    ? "justify-start"
+                                    : "justify-center"
+                                } w-full p-3 rounded-lg
+                                ${
+                                  isActive
+                                    ? "text-lime-600 bg-lime-50 dark:text-lime-400 dark:bg-lime-900/20"
+                                    : "text-gray-500 hover:text-lime-600 hover:bg-lime-50 dark:text-gray-400 dark:hover:text-lime-400 dark:hover:bg-lime-900/20"
+                                }
+                            `}
+              >
+                <i className={`bi ${item.icon} text-xl`}></i>
+                {isExpanded && <span className="ml-4">{item.text}</span>}
+              </NavLink>
+            ))}
+          </nav>
+          <div className="px-2">
+            <button
+              onClick={() => setShowUserProfileModal(true)}
+              className="w-full p-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+            >
+              <i className="bi bi-person text-xl"></i>
+              <span className="sr-only">Perfil</span>
+            </button>
+            <button
+              onClick={() => actions.toggleTheme()}
+              className="w-full p-3 text-gray-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg"
+            >
+              <i className="bi bi-palette text-xl"></i>
+              <span className="sr-only">Cambiar Tema</span>
+            </button>
+            <button
+              onClick={() => actions.logout()}
+              className="w-full p-3 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg"
+            >
+              <i className="bi bi-box-arrow-left text-xl"></i>
+              <span className="sr-only">Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+      <TiendaSelectionModal
+        isOpen={showTiendaModal}
+        onClose={() => setShowTiendaModal(false)}
+      />
+      <UserProfileModal
+        isOpen={showUserProfileModal}
+        onClose={() => setShowUserProfileModal(false)}
+        usuario={store.usuariofirmado}
+      />
+    </>
+  );
 };

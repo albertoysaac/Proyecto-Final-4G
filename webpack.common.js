@@ -45,7 +45,13 @@ module.exports = {
       '@utils': path.resolve(__dirname, 'src/front/js/lib/utils.js'),
       '@lib': path.resolve(__dirname, 'src/front/js/lib'),
       '@hooks': path.resolve(__dirname, 'src/front/js/hooks')
-    }
+    },
+	fallback: {
+		path: require.resolve("path-browserify"),
+		http2: false, // Ignorar http2 si no es necesario
+		tls: false,  // Ignorar tls si no es necesario
+		stream: require.resolve("stream-browserify"),
+	}
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),

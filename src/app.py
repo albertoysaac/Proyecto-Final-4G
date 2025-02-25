@@ -2,16 +2,19 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
-from datetime import timedelta
+import random
+from datetime import timedelta, datetime
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db 
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
+from api.crear_registros import crear_registros
+from api.crear_operaciones import crear_operaciones
 from flask_cors import CORS
 # from models import Person
 
@@ -21,7 +24,15 @@ static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, supports_credentials=True, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:3000"],
+            "methods": ["GET", "POST", "PUT", "DELETE"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "expose_headers": ["Content-Range", "X-Content-Range"],
+            "supports_credentials": True
+        }
+    })
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
@@ -38,7 +49,7 @@ db.init_app(app)
 # add the admin
 setup_admin(app)
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_KEY")  # Cambia esto por una clave segura
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)  # Token de acceso expira en 15 minutos
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=20)  # Token de acceso expira en 15 minutos
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 jwt = JWTManager(app)
 
@@ -74,6 +85,26 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0  # avoid cache memory
     return response
 
+def borrar_bd():
+    """Borrar todas las tablas y sus datos en la base de datos."""
+    db.drop_all()
+    db.create_all()
+    print("Base de datos borrada y recreada exitosamente.")
+
+@app.cli.command("crear_registros")
+def crear_registros_command():
+    """Borrar la base de datos y crear registros iniciales."""
+    with app.app_context():
+        borrar_bd()
+        crear_registros()
+    print("Registros iniciales creados exitosamente.")
+
+@app.cli.command("crear_operaciones")
+def crear_operaciones_command():
+    """Crear operaciones y movimientos en la base de datos."""
+    with app.app_context():
+        crear_operaciones()
+    print("Operaciones y movimientos creados exitosamente.")
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

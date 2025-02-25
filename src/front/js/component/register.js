@@ -42,10 +42,20 @@ export const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        actions.nuevaTienda({
-			tienda: tiendaData,
-			usuario: userData
-		});
+        try{
+            const status = await actions.registro({
+                tienda: tiendaData,
+                usuario: userData
+            });
+            if (status) {
+                navigate('/dashboard/inicio');
+            } else {
+                console.log("Registro fallido");
+            }
+        }
+        catch(error){
+            console.error("Error during register:", error);
+        }
 		
     };
 
