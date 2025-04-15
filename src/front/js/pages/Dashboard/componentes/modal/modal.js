@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
-export const Modal = ({ item, onSave, onDelete, onClose }) => {
+const Modal = ({ item, onSave, onDelete, onClose }) => {
   const [data, setData] = useState({
     cantidad: item.cantidad,
     cantidad_minima: item.cantidad_minima,
@@ -99,3 +100,12 @@ export const Modal = ({ item, onSave, onDelete, onClose }) => {
     </div>
   );
 };
+
+Modal.propTypes = {
+  item: PropTypes.object.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
+export default Modal;

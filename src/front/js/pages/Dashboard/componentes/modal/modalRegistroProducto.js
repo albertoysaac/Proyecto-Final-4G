@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 
-export const ModalRegistroProducto = ({ producto, onClose, onGuardar, modo }) => {
+const ModalRegistroProducto = ({ producto, onClose, onGuardar, modo }) => {
     const [formData, setFormData] = useState({
         cantidad: producto.cantidad || 0,
         cantidad_maxima: producto.cantidad_maxima || 60,
@@ -193,3 +193,5 @@ ModalRegistroProducto.propTypes = {
     onGuardar: PropTypes.func.isRequired,
     modo: PropTypes.string.isRequired
 };
+
+export default ModalRegistroProducto;

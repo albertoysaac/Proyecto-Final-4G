@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-export const ModalPago = ({ totales, onClose, onProcesar }) => {
+const ModalPago = ({ totales, onClose, onProcesar }) => {
     const [metodoPago, setMetodoPago] = useState('efectivo');
     const [montoRecibido, setMontoRecibido] = useState('');
     const [loading, setLoading] = useState(false);
@@ -120,3 +120,5 @@ ModalPago.propTypes = {
     onClose: PropTypes.func.isRequired,
     onProcesar: PropTypes.func.isRequired
 };
+
+export default ModalPago;

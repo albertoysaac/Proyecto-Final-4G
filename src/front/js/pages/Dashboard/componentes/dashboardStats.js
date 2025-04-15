@@ -1,8 +1,9 @@
 import React, { useEffect, useContext } from 'react';
 import { Context } from '../../../store/appContext';
-import { StatsCard } from './statsCard';
+import StatsCard from './statsCard';
 
-export const DashboardStats = ({ isLoading }) => {
+
+const DashboardStats = ({ isLoading }) => {
     const { store } = useContext(Context);
     
     return (
@@ -34,3 +35,5 @@ export const DashboardStats = ({ isLoading }) => {
         </div>
     );
 };
+
+export default DashboardStats;

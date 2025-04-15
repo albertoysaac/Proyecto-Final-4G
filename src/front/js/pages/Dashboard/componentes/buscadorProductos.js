@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../../../store/appContext";
-import { ModalRegistroProducto } from "./modal/modalRegistroProducto"; // Importar el nuevo modal
-import { getOpenFoodFacts } from "../../../utils/openFoodFacts"; // Importar la función para obtener datos de productos
+import {getOpenFoodFacts} from "../../../utils/openFoodFacts";
+
+const ModalRegistroProducto = React.lazy(() => import("./modal/modalRegistroProducto")); // Importar el nuevo modal
 
 export const BuscadorProductos = () => {
     const { store, actions } = useContext(Context);

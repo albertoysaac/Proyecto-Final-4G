@@ -1,10 +1,11 @@
 import React, { useState, useContext } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Context } from "../store/appContext";
-import { TiendaSelectionModal } from "./TiendaSelectionModal";
-import { UserProfileModal } from "../pages/Dashboard/componentes/modal/userProfileModal";
 
-export const Asidebar = () => {
+const TiendaSelectionModal = React.lazy(() => import("./TiendaSelectionModal"));
+const UserProfileModal = React.lazy(() => import("../pages/Dashboard/componentes/modal/UserProfileModal"));
+
+const Asidebar = () => {
   const { store, actions } = useContext(Context);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showTiendaModal, setShowTiendaModal] = useState(false);
@@ -169,3 +170,5 @@ export const Asidebar = () => {
     </>
   );
 };
+
+export default Asidebar;

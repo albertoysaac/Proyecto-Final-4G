@@ -105,3 +105,4 @@ StatsCard.propTypes = {
 	trendType: PropTypes.oneOf(["success", "danger"]),
 	variant: PropTypes.oneOf(["default", "minimal"]),
 };
+

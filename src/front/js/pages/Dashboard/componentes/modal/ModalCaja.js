@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../../../../store/appContext";
 import PropTypes from "prop-types";
 
-export const ModalCaja = ({ isOpen, onClose, onAbrirCaja, onCerrarCaja, cajaAbierta }) => {
+const ModalCaja = ({ isOpen, onClose, onAbrirCaja, onCerrarCaja, cajaAbierta }) => {
 	const { store } = useContext(Context);
     const [montoInicial, setMontoInicial] = useState(0);
     const [montoFinal, setMontoFinal] = useState(0);
@@ -79,3 +79,5 @@ ModalCaja.propTypes = {
     onCerrarCaja: PropTypes.func.isRequired,
     cajaAbierta: PropTypes.bool.isRequired,
 };
+
+export default ModalCaja;

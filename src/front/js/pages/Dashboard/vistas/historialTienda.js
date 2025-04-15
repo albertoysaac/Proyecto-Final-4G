@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Context } from "../../../store/appContext";
-import { HistorialLogs } from "../componentes/historialLogs";
-import { HistorialVentasCompras } from "../componentes/historialVentasCompras";
-import { HistorialInventario } from "../componentes/historialInventario";
-import { HistorialCaja } from "../componentes/historialCaja";
+import HistorialLogs from "../componentes/historialLogs";
+import HistorialVentasCompras from "../componentes/historialVentasCompras";
+import HistorialInventario from "../componentes/historialInventario";
+import HistorialCaja from "../componentes/historialCaja";
 
-export const HistorialTienda = () => {
+const HistorialTienda = () => {
 const { store, actions } = useContext(Context);
 const [isLoading, setIsLoading] = useState(true);
 const [error, setError] = useState(null);
@@ -55,3 +55,5 @@ return (
     </div>
 );
 };
+
+export default HistorialTienda;

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Context } from "../../../store/appContext";
-import { TablaInventario } from "../componentes/tablaInventario";
+import {TablaInventario} from "../componentes/tablaInventario";
 
-export const Inventario = () => {
+const Inventario = () => {
 const { store, actions } = useContext(Context);
 const [isLoading, setIsLoading] = useState(true);
 const [error, setError] = useState(null);
@@ -42,3 +42,6 @@ return (
     </div>
 );
 };
+
+
+export default Inventario;

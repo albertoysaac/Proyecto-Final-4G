@@ -9,13 +9,13 @@ let publicUrl = `ws://localhost:${port}/ws`;
 
 //only for github
 if(process.env.GITPOD_WORKSPACE_URL){
-  const [schema, host] = process.env.GITPOD_WORKSPACE_URL.split('://');
-  publicUrl = `wss://${port}-${host}/ws`;
+	const [schema, host] = process.env.GITPOD_WORKSPACE_URL.split('://');
+	publicUrl = `wss://${port}-${host}/ws`;
 }
 
 //only for codespaces
 if(process.env.CODESPACE_NAME){
-  publicUrl = `wss://${process.env.CODESPACE_NAME}-${port}.app.github.dev/ws`;
+	publicUrl = `wss://${process.env.CODESPACE_NAME}-${port}.app.github.dev/ws`;
 }
 
 module.exports = merge(common, {
@@ -29,12 +29,12 @@ module.exports = merge(common, {
         allowedHosts: "all",
         historyApiFallback: true,
         static: {
-          directory: path.resolve(__dirname, "dist"),
+			directory: path.resolve(__dirname, "dist"),
         },
         client: {
-          webSocketURL: publicUrl,
-          overlay: true,
-          progress: true
+			webSocketURL: publicUrl,
+			overlay: true,
+			progress: true
         },
     },
 	resolve: {

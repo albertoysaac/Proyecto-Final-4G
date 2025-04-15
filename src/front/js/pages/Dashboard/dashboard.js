@@ -1,18 +1,18 @@
-import React from "react";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState ,Suspense} from "react";
 import { Context } from "../../store/appContext";
 import { Routes, Route } from "react-router-dom";
-import { Asidebar } from "../../component/asidebar";
-import { TiendaSelectionModal } from "./componentes/tiendaSelectionModal";
-import { Inicio } from "./vistas/inicio";
-import { Usuarios } from "./vistas/usuarios";
-import { Ventas } from "./vistas/ventas";
-import { Inventario } from "./vistas/inventario";
-import { HistorialTienda } from "./vistas/historialTienda";
-import { GlobalStats } from "./vistas/globalStats";
-import { ModalCaja } from "../Dashboard/componentes/modal/ModalCaja";
 
-export const Dashboard = () => {
+const Asidebar = React.lazy(() => import("../../component/asidebar"));
+const TiendaSelectionModal = React.lazy(() => import("./componentes/tiendaSelectionModal"));
+const Inicio = React.lazy(() => import("./vistas/inicio"));
+const Usuarios = React.lazy(() => import("./vistas/usuarios"));
+const Ventas = React.lazy(() => import("./vistas/ventas"));
+const Inventario = React.lazy(() => import("./vistas/inventario"));
+const HistorialTienda = React.lazy(() => import("./vistas/historialTienda"));
+const GlobalStats = React.lazy(() => import("./vistas/globalStats"));
+const ModalCaja = React.lazy(() => import("./componentes/modal/ModalCaja"));
+
+const Dashboard = () => {
     const { store, actions } = useContext(Context);
     const [showModal, setShowModal] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
@@ -91,7 +91,7 @@ export const Dashboard = () => {
     };
 
     return (
-        <>
+        <Suspense fallback={<div>Cargando...</div>}>
             {CEO && (
                 <TiendaSelectionModal isOpen={showModal} onClose={handleModalClose} />
             )}
@@ -135,6 +135,8 @@ export const Dashboard = () => {
                 onCerrarCaja={handleCerrarCaja}
                 cajaAbierta={cajaAbierta}
             />
-        </>
+        </Suspense>
     );
 };
+
+export default Dashboard;

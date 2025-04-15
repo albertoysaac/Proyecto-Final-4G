@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-export const ModalUsuario = ({ usuario , onClose, onSave , tiendaId}) => {
+const ModalUsuario = ({ usuario , onClose, onSave , tiendaId}) => {
 
     const [formData, setFormData] = useState({
         nombre: usuario?.nombre || '',
@@ -254,3 +254,5 @@ ModalUsuario.propTypes = {
     onClose: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired
 };
+
+export default ModalUsuario;

@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 
-export const Login = () => {
+const Login = () => {
   const { store, actions } = useContext(Context);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -128,3 +128,5 @@ export const Login = () => {
     </div>
   );
 };
+
+export default Login;
