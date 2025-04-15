@@ -1,12 +1,13 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Context } from "../../../store/appContext";
-import { TablaUsuarios } from "../componentes/tablaUsuarios";
-import { ModalUsuario } from "../componentes/modal/modalUsuario";
+import {TablaUsuarios} from "../componentes/tablaUsuarios";
 
-export const Usuarios = () => {
+const ModalUsuario = React.lazy(() => import("../componentes/modal/modalUsuario"));
+
+const Usuarios = () => {
 	const { store, actions } = useContext(Context);
 	const [showModal, setShowModal] = useState(false);
-	const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
+	const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null); 
 	const [usuarios, setUsuarios] = useState([]);
 	const ceo = store.authdata?.autoridades?.rol === "ceo";
 	const tiendaId = store.authdata?.autoridades?.id || "";
@@ -158,3 +159,5 @@ export const Usuarios = () => {
 	</div>
 	);
 };
+
+export default Usuarios;

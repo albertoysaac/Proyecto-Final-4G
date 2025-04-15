@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../store/appContext';
 
-export const Register = () => {
+const Register = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
 	const { actions } = useContext(Context);
@@ -50,7 +50,7 @@ export const Register = () => {
             if (status) {
                 navigate('/dashboard/inicio');
             } else {
-                console.log("Registro fallido");
+                console.log("Registro fallido", status, tiendaData, userData);
             }
         }
         catch(error){
@@ -268,7 +268,7 @@ export const Register = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    Hora Entrada
+                                    Hora de Entrada
                                 </label>
                                 <input 
                                     type="time"
@@ -286,7 +286,7 @@ export const Register = () => {
                             </div>
                             <div className="space-y-2">
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    Hora Salida
+                                    Hora de Salida
                                 </label>
                                 <input 
                                     type="time"
@@ -330,3 +330,5 @@ export const Register = () => {
         </div>
     );
 };
+
+export default Register;

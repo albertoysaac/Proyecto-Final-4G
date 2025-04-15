@@ -26,7 +26,10 @@ app = Flask(__name__)
 app.url_map.strict_slashes = False
 CORS(app, supports_credentials=True, resources={
         r"/api/*": {
-            "origins": ["http://localhost:3000"],
+            "origins": [
+                "http://localhost:3000",  # Mantén localhost para desarrollo local
+                f"https://{os.getenv('CODESPACE_NAME')}-3000.app.github.dev"  # URL pública de Codespaces
+            ],
             "methods": ["GET", "POST", "PUT", "DELETE"],
             "allow_headers": ["Content-Type", "Authorization"],
             "expose_headers": ["Content-Range", "X-Content-Range"],

@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export const UserProfileModal = ({ isOpen, onClose, usuario }) => {
+const UserProfileModal = ({ isOpen, onClose, usuario }) => {
     if (!isOpen) return null;
 
     return (
@@ -52,3 +52,5 @@ UserProfileModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     usuario: PropTypes.object.isRequired,
 };
+
+export default UserProfileModal;

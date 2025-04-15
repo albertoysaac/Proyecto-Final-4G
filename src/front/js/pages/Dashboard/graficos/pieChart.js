@@ -1,25 +1,26 @@
 import React from "react";
 import { Pie, PieChart, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { colors } from "./config";
+import { colors as defaultColors } from "./config";
 
-export const Piechart = ({ data, title, subtitle }) => {
-  const COLORS = [
-    colors.primary,
-    colors.secondary,
-    colors.success,
-    colors.warning,
-    colors.danger,
+export const Piechart = ({ data, title, subtitle, colors }) => {
+  // Usar los colores pasados como prop o los predeterminados
+  const COLORS = colors || [
+    defaultColors.primary,
+    defaultColors.secondary,
+    defaultColors.success,
+    defaultColors.warning,
+    defaultColors.danger,
   ];
 
   return (
-    <div className="w-full h-[300px] p-4 bg-white rounded-lg shadow">
+    <div className="w-full h-[300px] p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <p className="text-sm text-gray-600">{subtitle}</p>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{subtitle}</p>
       </div>
       {data && data.length > 0 ? (
         <>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="70%">
             <PieChart>
               <Pie
                 data={data}
@@ -28,7 +29,8 @@ export const Piechart = ({ data, title, subtitle }) => {
                 cx="50%"
                 cy="50%"
                 outerRadius={80}
-                fill={colors.primary}
+                fill={defaultColors.primary}
+                label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
               >
                 {data.map((entry, index) => (
                   <Cell
@@ -37,7 +39,7 @@ export const Piechart = ({ data, title, subtitle }) => {
                   />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
             </PieChart>
           </ResponsiveContainer>
           <div className="mt-4 grid grid-cols-2 gap-2">
@@ -47,8 +49,8 @@ export const Piechart = ({ data, title, subtitle }) => {
                   className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="text-sm">
-                  {item.nombre}: {item.valor}
+                <span className="text-sm text-gray-800 dark:text-gray-200">
+                  {item.nombre}: ${item.valor.toLocaleString()}
                 </span>
               </div>
             ))}
@@ -56,9 +58,11 @@ export const Piechart = ({ data, title, subtitle }) => {
         </>
       ) : (
         <div className="flex items-center justify-center h-full">
-          <p className="text-gray-600">No hay datos disponibles</p>
+          <p className="text-gray-600 dark:text-gray-400">No hay datos disponibles</p>
         </div>
       )}
     </div>
   );
 };
+
+export default Piechart;

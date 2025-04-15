@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useContext } from "react";
 import { Context } from "../../../store/appContext";
-import { Modal } from "../componentes/modal/modal";
+import Modal from "../componentes/modal/modal";
 
 export const TablaInventario = ({ inventario }) => {
   const { actions } = useContext(Context);

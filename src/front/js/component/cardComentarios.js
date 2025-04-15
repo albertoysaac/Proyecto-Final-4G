@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export const CardComentarios = ({datos}) => {
+const CardComentarios = ({datos}) => {
     return (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 
                         transform hover:scale-105 transition-transform duration-300">
@@ -36,3 +36,5 @@ CardComentarios.propTypes = {
         comentario: PropTypes.string.isRequired
     }).isRequired
 };
+
+export default CardComentarios;

@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Context } from "../../../store/appContext";
-import { BuscadorProductos } from "../componentes/buscadorProductos";
-import { CarritoVenta } from "../componentes/carritoVenta";
-import { ResumenVenta } from "../componentes/ResumenVenta";
-import { ModalPago } from "../componentes/modal/ModalPago";
-import { ModalCaja } from "../componentes/modal/ModalCaja";
+import {ResumenVenta} from "../componentes/ResumenVenta";
+import {CarritoVenta} from "../componentes/carritoVenta";
+import {BuscadorProductos} from "../componentes/buscadorProductos";
 
-export const Ventas = () => {
+const ModalPago = React.lazy(() => import("../componentes/modal/ModalPago"));
+const ModalCaja = React.lazy(() => import("../componentes/modal/ModalCaja"));
+
+const Ventas = () => {
     const { store, actions } = useContext(Context);
 	const carrito = store.carrito || [];
     const [showModalPago, setShowModalPago] = useState(false);
@@ -149,3 +150,5 @@ export const Ventas = () => {
         </div>
     );
 };
+
+export default Ventas;

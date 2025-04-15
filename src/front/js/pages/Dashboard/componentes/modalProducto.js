@@ -1,3 +1,6 @@
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+
 export const ModalProducto = ({ producto, modo, onClose, onGuardar }) => {
   const [datos, setDatos] = useState(producto);
 

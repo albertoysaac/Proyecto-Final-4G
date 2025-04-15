@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import PropTypes from 'prop-types';
 
-export const TiendaSelectionModal = ({ isOpen, onClose }) => {
+const TiendaSelectionModal = ({ isOpen, onClose }) => {
     const { store, actions } = useContext(Context);
 
     const handleSeleccion = (tienda) => {
@@ -40,3 +40,5 @@ TiendaSelectionModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired
 };
+
+export default TiendaSelectionModal;

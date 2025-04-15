@@ -48,7 +48,7 @@ def login():
                 refresh_token,
                 httponly=True,
                 secure=True,
-                samesite='Strict',
+                samesite='None',
                 max_age=timedelta(days=30),
                 path='/api/refresh'
             )
